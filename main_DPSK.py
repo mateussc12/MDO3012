@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import os
 import traceback
 from scipy import signal
-
+from funcs.DPSK_encoder import DPSK_encoder
 
 ########################################Parâmetrização##################################################################
 visa_address = 'OSCI'
@@ -21,10 +21,12 @@ NPPS = 2 ** 5
 Tx_bin_wave = np.random.choice([0, 1], N_Simb)
 Tx_bin_wave = np.array(Tx_bin_wave)
 # ts = Periodo de simbolo
-Ts_wave = 5.12e-6
+Ts_wave = 3.8e-6
+# Codifica DPSK
+Tx_bin_wave_encoded = DPSK_encoder(Tx_bin_wave)
 
 # Simbolo super amostrado
-Tx_bin_wave_supersampled = np.repeat(Tx_bin_wave, NPPS)
+Tx_bin_wave_supersampled = np.repeat(Tx_bin_wave_encoded, NPPS)
 # Periodo de amostragem da onda inteira
 Ta_wave = Ts_wave * NPPS
 Fa_wave = 1 / Ta_wave
@@ -74,7 +76,7 @@ MDO_Write_Read.Write(visa_address, Tx_bin_wave_supersampled, ta=f'period {Ta_wav
                      num_points=Nsamp_mdo)
 
 unnormalized_wave_uncut, normalized_wave_uncut, bin_normalized_wave_uncut, t_print_tela, t_acq, t_autoset, t_data = MDO_Write_Read.Read(
-    visa_address, channel='CH2')
+    visa_address, channel='CH1')
 ########################################################################################################################
 
 
